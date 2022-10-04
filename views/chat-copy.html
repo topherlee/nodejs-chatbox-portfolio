@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Lee Portfolio - Chatbox</title>
+        <style>
+            body {
+                backgroundColor: blue;
+            }
+
+            .messages {
+                width: 100%;
+                background-color: grey;
+            }
+            
+            .messages .myMessage {
+                border: 2px solid #2c88f2;
+                background-color: #2c88f2;
+                color: #ffffff;
+                float: right;
+                border: 2px solid green;
+                width: max-content;
+                margin-left: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .messages .incomingMessage {
+                background-color: #babec2;
+                border: 2px solid #babec2;
+                color: black;
+                float: left;
+                width: max-content;
+                margin-right: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .inputArea {
+                position: fixed;
+                margin-bottom:10px;
+                bottom: 0;
+                width: 100%
+            }
+                
+            
+        </style>
+    </head>
+  
+    <body>
+        <div id="chatMessages" class="messages"></div>
+        <div class="inputArea">
+            <span id="typingIndicator"></span>
+            <form id="inputForm" action="">
+                <input id="inputMessage" autocomplete="off" placeholder="Enter your message here...">
+                <input id="username" autocomplete="off" placeholder="Username">
+                <button id="sendMessage">Send</button>
+            </form>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            
+            var form = document.getElementById("inputForm");
+            var chatField = document.getElementById("inputMessage");
+            var username = document.getElementById("username");
+            
+            var typing = false,
+                timeout = undefined;
+
+            function timeoutFunction(){
+                typing = false;
+                socket.emit("typing indicator", username.value, false);
+            };
+
+            function typingNow(){
+                if (typing == false){
+                    typing = true;
+                    socket.emit("typing indicator", username.value, true);
+                    timeout = setTimeout(timeoutFunction, 5000);
+                } else {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(timeoutFunction, 5000);
+                }
+            };
+
+            chatField.addEventListener("keydown", function(e){
+                if (username.value){
+                    typingNow();
+                }
+            });
+
+            chatField.addEventListener("keyup", function(e){
+                if (username.value){
+                    typing = true;
+                    socket.emit("typing indicator", username.value, true);
+                    clearTimeout(timeout);
+                    timeout = setTimeout(timeoutFunction, 2000);
+                }
+            });
+
+            form.addEventListener("submit", function(e){
+                e.preventDefault();
+                if (chatField.value && username.value) {
+                    socket.emit("chat message", chatField.value, username.value);
+                    
+                    var messageLine = document.createElement("div");
+                    messageLine.className = "myMessage";
+                    messageLine.textContent = username.value + ": " + chatField.value;
+                    chatMessages.appendChild(messageLine);
+                    
+                    window.scrollTo(0, document.body.scrollHeight);
+                    chatField.value = "";
+                } else if (chatField.value && username.value == "") {
+                    username.style.backgroundColor = "red";
+                    username.setAttribute("placeholder","Username is required!");
+                }
+            });
+
+            socket.on("chat message", function(msg, username){
+                var messageLine = document.createElement("div");
+                messageLine.className = "incomingMessage";
+                messageLine.textContent = username + ": " + msg;
+                chatMessages.appendChild(messageLine);
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+
+            socket.on("typing indicator", function(username, isTyping){
+                var typing = document.getElementById("typingIndicator");
+                if (isTyping) {
+                    typing.innerHTML = username + " is typing...";
+                } else {
+                    typing.innerHTML = "";
+                }
+            });
+
+        </script>
+    </body>
+</html>
