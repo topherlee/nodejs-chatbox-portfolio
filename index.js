@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -6,49 +7,47 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const path = require('path');
 const cors = require('cors');
-//const MongoClient = require('mongodb').MongoClient;
 const mongoose = require('mongoose');
+const { auth } = require('express-openid-connect');
 const Chat = require('./models/Chat');
+const { requiresAuth } = require('express-openid-connect');
 
+//auth0 config
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.auth0ClientSecret,
+    baseURL: 'https://mixermarble-storechariot-8080.codio-box.uk',
+    clientID: process.env.auth0ClientId,
+    issuerBaseURL: 'https://christopher-lee.eu.auth0.com'
+};
+
+//MongoDB connection
 const uri = "mongodb+srv://topherlee:testing123@cluster0.zpirvch.mongodb.net/ChatApp?retryWrites=true&w=majority";
 mongoose.connect(uri);
 const db = mongoose.connection;
 
 app.set('view engine', 'ejs');
 app.use(express.json());
-app.use(express.static(__dirname + '/views'))
+app.use(express.static(__dirname + '/views'));
+app.use(auth(config));
 
-app.get('/chat', (req, res) => {
-    //res.render('chat.ejs');
-    res.sendFile(__dirname + '/views/chat.html');
+app.get('/chat', requiresAuth(), (req, res) => {
+    res.render('chat.ejs', {
+        user: req.oidc.user,
+    });
+    //res.sendFile(__dirname + '/views/chat.html');
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/views/index.html');
+    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+    //res.sendFile(__dirname + '/views/index.html');
 });
 
-/* io.use((socket, next) => {
-  const sessionID = socket.handshake.auth.sessionID;
-  if (sessionID) {
-    // find existing session
-    const session = sessionStore.findSession(sessionID);
-    if (session) {
-      socket.sessionID = sessionID;
-      socket.userID = session.userID;
-      socket.username = session.username;
-      return next();
-    }
-  }
-  const username = socket.handshake.auth.username;
-  if (!username) {
-    return next(new Error("invalid username"));
-  }
-  // create new session
-  socket.sessionID = randomId();
-  socket.userID = randomId();
-  socket.username = username;
-  next();
-}); */
+app.get('/profile', requiresAuth(), (req, res) => {
+    res.send(JSON.stringify(req.oidc.user));
+});
+
 
 io.on('connection', function(socket) {
     const users = [];
@@ -57,7 +56,7 @@ io.on('connection', function(socket) {
     Chat.find().then(function(result){
         //console.log(result)
         for (var msg of result){
-            console.log(msg)
+            //console.log(msg)
             socket.emit('output history', msg["message"], msg["user"], msg["timestamp"]);
         }
     })
