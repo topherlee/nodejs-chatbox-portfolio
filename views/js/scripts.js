@@ -7,6 +7,7 @@
 // Scripts
 // 
 
+
 window.addEventListener('DOMContentLoaded', event => {
 
     // Navbar shrink function
@@ -52,3 +53,18 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+//document.getElementById("username").addEventListener("click", openPopUpModal);
+document.getElementById("closeModal").addEventListener("click", closePopUpModal);
+var modal = document.getElementById("demo-modal");
+function openPopUpModal(){
+    modal.setAttribute("open", "true");
+    let overlay = document.createElement("div");
+    overlay.id = "modal-overlay";
+    document.body.appendChild(overlay);
+}
+
+function closePopUpModal(){
+    modal.removeAttribute("open");
+    document.body.removeChild(document.getElementById("modal-overlay"));
+}

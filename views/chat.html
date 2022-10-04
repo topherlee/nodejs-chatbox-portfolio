@@ -18,21 +18,29 @@
             body {
                 display: grid;
                 grid-template-columns: 100vw;
-                grid-template-rows: 10vh minmax(58vh, 68vh) 20vh;
-                grid-row-gap : 1vh;
+                grid-template-rows: 10vh minmax(58vh, 70vh) 20vh;
+                grid-row-gap : 0.5vh;
                 height: 100%;
                 overflow: hidden;
                 background-color: #f8f8f8;
             }
+            @media (max-width: 500px) {
+                body {
+                    grid-template-rows: 10vh 65vh 20vh;
+                }
+            }
 
             .middleWindow {
                 display: grid;
-                grid-template-columns: 24.5vw 75vw;
-                grid-column-gap : 0.5rem;
+                grid-template-columns: 15vw 85vw;
                 background-color: grey;
                 min-height: 58vh;
                 width: 100%;
-                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%), url("../assets/img/bg-masthead.jpg");
+            }
+            @media (max-width: 700px) {
+                .middleWindow {
+                    grid-template-columns: 25vw 75vw;
+                }
             }
 
             .chatMembers {
@@ -43,14 +51,14 @@
             }
 
             .contents {
-                position: relative;
                 overflow-y: scroll;
                 overflow-x: hidden;
                 padding: 2rem;
                 grid-column: 2 / 3;
                 width: 100%;
+                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%), url("../assets/img/bg-masthead.jpg");
             }
-
+            
             .messages {
                 width: 100%;
                 background-color: #9fa3ab;
@@ -69,6 +77,7 @@
                 width: max-content;
                 white-space: normal;
                 padding: 1rem;
+                padding-bottom: 2rem;
                 border-radius: 20px;
                 box-shadow: rgba(0, 0, 0, 0.09) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.09) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
             }
@@ -233,10 +242,26 @@
             <form id="inputForm" action="">
                 <textarea id="inputMessage" autocomplete="off" placeholder="Enter your message here... and remember to be nice!"></textarea>
                 <span id="placeholder">Username:</span>
-                <input id="username" autocomplete="off" placeholder="Username">
+                <input id="username" autocomplete="off" placeholder="Username" >
                 <button id="sendMessage" type="submit">Send</button>
             </form>
         </div>
+        <div id="demo-modal" class="modal" role="dialog" tabindex="-1">
+  <div class="model-inner">
+    <div class="modal-header">
+      <h3>Hello World</h3>
+      <button class="modal-close" data-id="demo-modal" id="closeModal" aria-label="Close">
+        &times;
+      </button>
+    </div>
+    <p>
+      Natus earum velit ab nobis eos. Sed et exercitationem voluptatum omnis
+      dolor voluptates. Velit ut ipsam sunt ipsam nostrum. Maiores officia
+      accusamus qui sapiente. Dolor qui vel placeat dolor nesciunt quo dolor
+      dolores. Quo accusamus hic atque nisi minima.
+    </p>
+  </div>
+</div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script>
@@ -248,12 +273,12 @@
             
             var typing = false,
                 timeout = undefined;
-
+            
             function timeoutFunction(){
                 typing = false;
                 socket.emit("typing indicator", username.value, false);
             };
-
+            
             function typingNow(){
                 if (typing == false){
                     typing = true;
@@ -264,13 +289,13 @@
                     timeout = setTimeout(timeoutFunction, 5000);
                 }
             };
-
+            
             chatField.addEventListener("keydown", function(e){
                 if (username.value){
                     typingNow();
                 }
             });
-
+            
             chatField.addEventListener("keyup", function(e){
                 if (username.value){
                     typing = true;
@@ -280,15 +305,20 @@
                 }
             });
 
-            form.addEventListener("submit", function(e){
-                e.preventDefault();
+            function sendText(){
+                var timeNow = new Date();
                 if (chatField.value && username.value) {
-                    socket.emit("chat message", chatField.value, username.value);
+                    socket.emit("chat message", chatField.value, username.value, timeNow);
                     
                     var messageLine = document.createElement("div");
                     messageLine.className = "myMessage";
                     messageLine.textContent = username.value + ": " + chatField.value;
                     chatMessages.appendChild(messageLine);
+
+                    var timeIndicator = document.createElement("div");
+                    timeIndicator.className = "timestamp";
+                    timeIndicator.textContent = timeNow.getHours() + ':' + timeNow.getMinutes();
+                    messageLine.appendChild(timeIndicator);
                     
                     //const chatContent = document.getElementById("contents");
                     contents.scrollTo(0, contents.scrollHeight);
@@ -297,41 +327,50 @@
                     username.style.backgroundColor = "red";
                     username.setAttribute("placeholder","Username is required!");
                 }
+            }
+            
+            form.addEventListener("submit", function(e){
+                e.preventDefault();
+                sendText();
             });
-
+            
             username.addEventListener("input", function(){
                 username.style.backgroundColor = "#ffffff";
             });
-
+            
             document.getElementById("inputMessage").addEventListener("keypress", function(e){
                 if (e.keyCode === 13) {
                     e.preventDefault();
-                    if (chatField.value && username.value) {
-                        socket.emit("chat message", chatField.value, username.value);
-                        
-                        var messageLine = document.createElement("div");
-                        messageLine.className = "myMessage";
-                        messageLine.textContent = username.value + ": " + chatField.value;
-                        chatMessages.appendChild(messageLine);
-                        
-                        //const chatContent = document.getElementById("contents");
-                        contents.scrollTo(0, contents.scrollHeight);
-                        chatField.value = "";
-                    } else if (chatField.value && username.value == "") {
-                        username.style.backgroundColor = "red";
-                        username.setAttribute("placeholder","Username is required!");
-                    }
+                    sendText();
                 }
             });
-
-            socket.on("chat message", function(msg, username){
+            
+            socket.on("chat message", function(msg, username, timestamp){
                 var messageLine = document.createElement("div");
                 messageLine.className = "incomingMessage";
                 messageLine.textContent = username + ": " + msg;
                 chatMessages.appendChild(messageLine);
+
+                var timeIndicator = document.createElement("div");
+                timeIndicator.className = "timestamp";
+                timeIndicator.textContent = timestamp;
+                messageLine.appendChild(timeIndicator);
                 contents.scrollTo(0, contents.scrollHeight);
             });
+            
+            socket.on("output history", function(msg, username, timestamp){
+                var messageLine = document.createElement("div");
+                messageLine.className = "incomingMessage";
+                messageLine.textContent = username + ": " + msg;
+                chatMessages.appendChild(messageLine);
 
+                var timeIndicator = document.createElement("div");
+                timeIndicator.className = "timestamp";
+                timeIndicator.textContent = timestamp;
+                messageLine.appendChild(timeIndicator);
+                contents.scrollTo(0, contents.scrollHeight);
+            })
+            
             socket.on("typing indicator", function(username, isTyping){
                 var typing = document.getElementById("typingIndicator");
                 if (isTyping) {
@@ -342,8 +381,6 @@
                     document.getElementById("typingIndicator").style.display = "none";
                 }
             });
-
-            
         </script>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

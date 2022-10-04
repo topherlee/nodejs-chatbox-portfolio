@@ -10,15 +10,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const Chat = require('./models/Chat');
 
-const uri = "mongodb+srv://topherlee:kulibangunas@cluster0.zpirvch.mongodb.net/ChatApp?retryWrites=true&w=majority";
+const uri = "mongodb+srv://topherlee:testing123@cluster0.zpirvch.mongodb.net/ChatApp?retryWrites=true&w=majority";
 mongoose.connect(uri);
-//const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
-/* const newMessage = Chat.create({
-    user:"topah",
-    message:"123",
-    timestamp:new Date()
-}); */
 
 app.set('view engine', 'ejs');
 app.use(express.json());
@@ -33,18 +27,53 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/views/index.html');
 });
 
+/* io.use((socket, next) => {
+  const sessionID = socket.handshake.auth.sessionID;
+  if (sessionID) {
+    // find existing session
+    const session = sessionStore.findSession(sessionID);
+    if (session) {
+      socket.sessionID = sessionID;
+      socket.userID = session.userID;
+      socket.username = session.username;
+      return next();
+    }
+  }
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
+  // create new session
+  socket.sessionID = randomId();
+  socket.userID = randomId();
+  socket.username = username;
+  next();
+}); */
+
 io.on('connection', function(socket) {
+    const users = [];
+
+    //retrieve all chats
+    Chat.find().then(function(result){
+        //console.log(result)
+        for (var msg of result){
+            console.log(msg)
+            socket.emit('output history', msg["message"], msg["user"], msg["timestamp"]);
+        }
+    })
+
     console.log('A User Connected');
     socket.broadcast.emit("chat message", "A User Connected", "system");
-
-    socket.on('chat message', function(msg, username){
-        console.log(username + ": " + msg);
+ 
+    socket.on('chat message', function(msg, username, timestamp){
+        console.log(`<${timestamp}> ` + username + ": " + msg);
         const msgToStore = Chat.create({
             user: username,
             message: msg,
-            timestamp: new Date()
+            timestamp: timestamp
+        }).then(() => {
+        socket.broadcast.emit("chat message", msg, username, timestamp);
         });
-        socket.broadcast.emit("chat message", msg, username);
     });
 
     socket.on('typing indicator', function(username, isTyping){
