@@ -23,7 +23,7 @@ const config = {
 };
 
 //MongoDB connection
-const uri = "mongodb+srv://topherlee:testing123@cluster0.zpirvch.mongodb.net/ChatApp?retryWrites=true&w=majority";
+const uri = 'mongodb+srv://topherlee:' + process.env.MONGO_PASSWORD + '@cluster0.zpirvch.mongodb.net/ChatApp?retryWrites=true&w=majority';
 mongoose.connect(uri);
 const db = mongoose.connection;
 
@@ -32,11 +32,11 @@ app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 app.use(auth(config));
 
+const users = [];
 app.get('/chat', requiresAuth(), (req, res) => {
     res.render('chat.ejs', {
         user: req.oidc.user,
     });
-    //res.sendFile(__dirname + '/views/chat.html');
 });
 
 app.get('/', (req, res) => {
@@ -50,20 +50,25 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 
 io.on('connection', function(socket) {
-    const users = [];
 
     //retrieve all chats
     Chat.find().then(function(result){
-        //console.log(result)
+        var i = 0;
         for (var msg of result){
             //console.log(msg)
-            socket.emit('output history', msg["message"], msg["user"], msg["timestamp"]);
+            i++
+            if (i <= 200) {
+                socket.emit('output history', msg["message"], msg["user"], msg["timestamp"]);
+            }
         }
     })
 
     console.log('A User Connected');
-    socket.broadcast.emit("chat message", "A User Connected", "system");
- 
+
+    socket.on('connected', function(msg, username, timestamp){
+        socket.broadcast.emit("connected", msg, username, timestamp);
+    })
+
     socket.on('chat message', function(msg, username, timestamp){
         console.log(`<${timestamp}> ` + username + ": " + msg);
         const msgToStore = Chat.create({

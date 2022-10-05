@@ -226,6 +226,11 @@
                             <li class="nav-item"><a class="nav-link" href="/chat">Chatbox</a></li>
                             <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
                             <li class="nav-item"><a class="nav-link" href="#signup">Contact</a></li>
+                            <% if (user) { %>
+                                <li class="nav-item"><a class="nav-link" href="javascript:openPopUpModal();">Hello, <%= user.nickname %></a></li>
+                            <% } else { %>
+                                <li class="nav-item"><a class="nav-link" href="/login;">Login / Signup</a></li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>
@@ -243,7 +248,7 @@
                 <textarea id="inputMessage" autocomplete="off" placeholder="Enter your message here... and remember to be nice!"></textarea>
                 <span id="placeholder">Username:</span>
                 <% if (user) { %>
-                    <input id="username" disabled value="<%= user.nickname %>">
+                    <input id="username" placeholder="Username?" disabled value="<%= user.nickname %>">
                 <% } else { %>
                     <input id="username" autocomplete="off" placeholder="Username?" >
                 <% } %>
@@ -251,26 +256,28 @@
             </form>
         </div>
         <div id="demo-modal" class="modal" role="dialog" tabindex="-1">
-  <div class="model-inner">
-    <div class="modal-header">
-      <h3>Hello World</h3>
-      <button class="modal-close" data-id="demo-modal" id="closeModal" aria-label="Close">
-        &times;
-      </button>
-    </div>
-    <p>
-      Natus earum velit ab nobis eos. Sed et exercitationem voluptatum omnis
-      dolor voluptates. Velit ut ipsam sunt ipsam nostrum. Maiores officia
-      accusamus qui sapiente. Dolor qui vel placeat dolor nesciunt quo dolor
-      dolores. Quo accusamus hic atque nisi minima.
-    </p>
-  </div>
-</div>
+            <div class="model-inner">
+                <div class="modal-header">
+                    <h3>Hello there, <%= user.nickname%>!</h3>
+                    <button data-id="demo-modal" id="closeModal" aria-label="Close">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-content">
+                    <img src="<%= user.picture %>" title="profile_pic">
+                    <ul>
+                        <li>Your Username: <%= user.nickname %></li>
+                        <li>Your Email Address: <%= user.email %></li>
+                        <li>Email verification: <% if (user.email_verified == false) { %> Unverified <% } else { %> Verified <% } %></li>
+                    </ul>
+                    <button onclick="location.href='/logout'" type="button">Logout</button>
+                </div>
+            </div>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script>
             var socket = io();
-            
             var form = document.getElementById("inputForm");
             var chatField = document.getElementById("inputMessage");
             var username = document.getElementById("username");
@@ -332,6 +339,11 @@
                     username.setAttribute("placeholder","Username is required!");
                 }
             }
+
+            <% if (user) { %>
+                socket.emit("connected", "<%= user.nickname %> connected","System Notification")
+            <% } %> 
+            
             
             form.addEventListener("submit", function(e){
                 e.preventDefault();
@@ -364,7 +376,24 @@
             
             socket.on("output history", function(msg, username, timestamp){
                 var messageLine = document.createElement("div");
-                messageLine.className = "incomingMessage";
+                if (username == "<%= user.nickname %>") {
+                    messageLine.className = "myMessage";
+                } else {
+                    messageLine.className = "incomingMessage";
+                } 
+                messageLine.textContent = username + ": " + msg;
+                chatMessages.appendChild(messageLine);
+
+                var timeIndicator = document.createElement("div");
+                timeIndicator.className = "timestamp";
+                timeIndicator.textContent = timestamp;
+                messageLine.appendChild(timeIndicator);
+                contents.scrollTo(0, contents.scrollHeight);
+            })
+
+            socket.on("connected", function(msg, username, timestamp){
+                var messageLine = document.createElement("div");
+                messageLine.className = "incomingMessage"; 
                 messageLine.textContent = username + ": " + msg;
                 chatMessages.appendChild(messageLine);
 
