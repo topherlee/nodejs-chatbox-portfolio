@@ -238,7 +238,10 @@
             </nav>
         </div>
         <div class="middleWindow">
-            <div class="chatMembers">Members</div>
+            <div class="chatMembers">
+                Active Users:
+                <ul id="memberList"></ul>
+            </div>
             <div class="contents" id="contents">
                 <div id="chatMessages" class="messages"></div>
             </div>
@@ -323,7 +326,7 @@
                 var timeNow = new Date();
                 if (chatField.value && username.value) {
                     socket.emit("chat message", chatField.value, username.value, timeNow);
-                    
+
                     var messageLine = document.createElement("div");
                     messageLine.className = "myMessage";
                     messageLine.textContent = username.value + ": " + chatField.value;
@@ -344,7 +347,8 @@
             }
 
             <% if (user) { %>
-                socket.emit("connected", "<%= user.nickname %> connected","System Notification")
+                socket.emit("connected", "has connected to the chat", "<%= user.nickname %>");
+                socket.emit("new user", "<%= user.nickname %>");
             <% } %> 
             
             
@@ -389,8 +393,14 @@
 
                 var timeIndicator = document.createElement("div");
                 timeIndicator.className = "timestamp";
-                timeIndicator.textContent = timestamp;
+                const time = new Date(timestamp);
+                //console.log(time.getDate(), time.getHours(),time.getMinutes());
+                var hours = time.getHours() < 10 ? "0"+time.getHours() : time.getHours();
+                var minutes = time.getMinutes() < 10 ? "0"+time.getMinutes() : time.getMinutes();
+                var newTime = time.toLocaleString("en-GB", { timeZone: 'UTC', hour: 'numeric', minute:'numeric', day:'numeric', month:'short', year:'numeric'});
+                timeIndicator.textContent = newTime;
                 messageLine.appendChild(timeIndicator);
+
                 contents.scrollTo(0, contents.scrollHeight);
             })
 
@@ -418,6 +428,18 @@
                 }
             });
 
+            socket.on("active users", function(users){
+                var ul = document.getElementById("memberList");
+                while(ul.firstChild) {
+                    ul.removeChild(ul.firstChild);
+                }
+
+                for (const user of users) {
+                    var li = document.createElement("li");
+                    li.textContent = user;
+                    ul.appendChild(li);
+                }
+            });
         </script>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

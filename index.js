@@ -30,12 +30,7 @@ app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 app.use(auth(config));
 
-const users = [];
-var connectedUser;
 app.get('/chat', requiresAuth(), (req, res) => {
-    connectedUser = req.oidc.user.nickname;
-    users.includes(connectedUser) ? "" : users.push(connectedUser);
-    console.log(users);
     res.render('chat.ejs', {
         user: req.oidc.user,
     });
@@ -52,10 +47,8 @@ app.get('/profile', requiresAuth(), async (req, res) => {
     res.send(JSON.stringify(req.oidc.user));
 });
 
-
+const activeUsers = new Set();
 io.on('connection', function(socket) {
-    console.log(`${connectedUser} Connected`);
-    
     //retrieve all chats
     Chat.find().then(function(result){
         var i = 0;
@@ -66,11 +59,21 @@ io.on('connection', function(socket) {
                 socket.emit('output history', msg["message"], msg["user"], msg["timestamp"]);
             }
         }
-    })
+    });
 
+    //keeps a set of active logged in users in the chat
+    socket.on("new user", function(username){
+        activeUsers.add(username);
+        socket.username = username;
+        //send users list to front end
+        io.emit("active users", [...activeUsers]);
+    });
+
+    //notifies everyone when a new user logs in the chat
     socket.on('connected', function(msg, username, timestamp){
-        socket.broadcast.emit("connected", msg, username, timestamp);
-    })
+        console.log(`${username} Connected`)
+        io.emit("connected", msg, username, timestamp);
+    });
 
     socket.on('chat message', function(msg, username, timestamp){
         console.log(`<${timestamp}> ` + username + ": " + msg);
@@ -85,18 +88,17 @@ io.on('connection', function(socket) {
 
     socket.on('typing indicator', function(username, isTyping){
         socket.broadcast.emit("typing indicator", username, isTyping);
-    })
+    });
 
     socket.on('disconnect', function() {
-        console.log('User Disconnected');
-        })
+        activeUsers.delete(socket.username);
+        console.log(`${socket.username} Disconnected`);
+        io.emit("active users", [...activeUsers]);
+        io.emit("connected", `${socket.username} has disconnected from the chat`, socket.username);
+    });
 });
 
 server.listen(8080, async function(){
     console.log(`Listening on port: ${server.address().port}`)
     db.on("error", console.error.bind(console, "MongoDB connection error:"));
-    /* try {
-        await client.connect();
-        collection = client.db("chatApp").collection("chats");
-    } catch (e) {console.error(e)}; */
 });
