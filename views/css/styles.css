@@ -11705,6 +11705,12 @@ body {
   margin: auto;
 }
 
+.modal-logout {
+  background-color: black;
+  color: white;
+  border-radius: 7px;
+}
+
 .modal-header {
   display: flex;
   align-items: center;

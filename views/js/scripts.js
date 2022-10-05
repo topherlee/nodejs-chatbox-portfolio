@@ -54,7 +54,6 @@ window.addEventListener('DOMContentLoaded', event => {
 
 });
 
-document.getElementById("username").addEventListener("click", openPopUpModal);
 document.getElementById("closeModal").addEventListener("click", closePopUpModal);
 var modal = document.getElementById("demo-modal");
 function openPopUpModal(){

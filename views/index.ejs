@@ -29,6 +29,12 @@
                         <li class="nav-item"><a class="nav-link" href="/chat">Chatbox</a></li>
                         <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
                         <li class="nav-item"><a class="nav-link" href="#signup">Contact</a></li>
+                        <% if (user) { %>
+                                <li class="nav-item"><a class="nav-link" href="javascript:openPopUpModal();">Hello, <%= user.nickname %></a></li>
+                                <li class="nav-item"><a class="nav-link" href="/profile"><%= user.nickname %>'s Profile</a></li>     
+                        <% } else { %>
+                            <li class="nav-item"><a class="nav-link" href="/login">Login / Signup</a></li>
+                        <% } %>
                     </ul>
                 </div>
             </div>
@@ -194,6 +200,27 @@
         </section>
         <!-- Footer-->
         <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; Your Website 2022</div></footer>
+        <div id="demo-modal" class="modal" role="dialog" tabindex="-1">
+            <div class="model-inner">
+            <% if (user) { %>
+                <div class="modal-header">
+                    <h3>Hello there, <%= user.nickname%>!</h3>
+                    <button data-id="demo-modal" id="closeModal" aria-label="Close">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-content">
+                    <img src="<%= user.picture %>" title="profile_pic">
+                    <ul>
+                        <li>Your Username: <%= user.nickname %></li>
+                        <li>Your Email Address: <%= user.email %></li>
+                        <li>Email verification: <% if (user.email_verified == false) { %> Unverified <% } else { %> Verified <% } %></li>
+                    </ul>
+                    <button class="modal-logout" onclick="location.href='/logout'" type="button">Logout</button>
+                </div>
+            <% } %>
+            </div>
+        </div>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->

@@ -8,18 +8,16 @@ const io = new Server(server);
 const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { auth } = require('express-openid-connect');
 const Chat = require('./models/Chat');
-const { requiresAuth } = require('express-openid-connect');
+const { auth, requiresAuth } = require('express-openid-connect');
 
-//auth0 config
 const config = {
     authRequired: false,
     auth0Logout: true,
     secret: process.env.auth0ClientSecret,
     baseURL: 'https://mixermarble-storechariot-8080.codio-box.uk',
     clientID: process.env.auth0ClientId,
-    issuerBaseURL: 'https://christopher-lee.eu.auth0.com'
+    issuerBaseURL: 'https://christopher-lee.eu.auth0.com',
 };
 
 //MongoDB connection
@@ -33,24 +31,31 @@ app.use(express.static(__dirname + '/views'));
 app.use(auth(config));
 
 const users = [];
+var connectedUser;
 app.get('/chat', requiresAuth(), (req, res) => {
+    connectedUser = req.oidc.user.nickname;
+    users.includes(connectedUser) ? "" : users.push(connectedUser);
+    console.log(users);
     res.render('chat.ejs', {
         user: req.oidc.user,
     });
 });
 
 app.get('/', (req, res) => {
-    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+    res.render('index.ejs', {
+        user: req.oidc.user,
+    });
     //res.sendFile(__dirname + '/views/index.html');
 });
 
-app.get('/profile', requiresAuth(), (req, res) => {
+app.get('/profile', requiresAuth(), async (req, res) => {
     res.send(JSON.stringify(req.oidc.user));
 });
 
 
 io.on('connection', function(socket) {
-
+    console.log(`${connectedUser} Connected`);
+    
     //retrieve all chats
     Chat.find().then(function(result){
         var i = 0;
@@ -62,8 +67,6 @@ io.on('connection', function(socket) {
             }
         }
     })
-
-    console.log('A User Connected');
 
     socket.on('connected', function(msg, username, timestamp){
         socket.broadcast.emit("connected", msg, username, timestamp);
