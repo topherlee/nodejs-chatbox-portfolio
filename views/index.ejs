@@ -15,6 +15,18 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="/css/styles.css" rel="stylesheet" />
         <style>
+        #recommendationrow.row {
+            align-items: justify;
+        }
+
+        #recommendationrow.row > * {
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 100%;
+            padding-right: calc(var(--bs-gutter-x) * 0.5);
+            padding-left: calc(var(--bs-gutter-x) * 0.5);
+            margin-top: var(--bs-gutter-y);
+        }
         </style>
     </head>
     <body id="page-top">
@@ -31,6 +43,7 @@
                         <li class="nav-item"><a class="nav-link" href="#about">About Me</a></li>
                         <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
                         <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/about">About This Project</a></li>
                         <li class="nav-item"><a class="nav-link" href="/chat">Chatbox</a></li>
                         <% if (user) { %>
                                 <li class="nav-item"><a class="nav-link" href="javascript:openPopUpModal();"><%= user.nickname %>'s Profile</a></li>
@@ -44,14 +57,14 @@
         <!-- Masthead-->
         <header class="masthead">
             <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center mt-3">
                     <div class="text-center">
-                        <h2 class="text-white-50 mx-auto mt-2 mb-5"><span title="It means 'Welcome!' in Indonesian">Selamat datang!</span> My name is...</h2>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5" title="It means 'Welcome!' in Indonesian">Selamat datang! My name is...</h2>
                         <h1 class="mx-auto my-0 text-uppercase">Christopher Lee</h1>
                         <h2 class="text-white-50 mx-auto mt-2 mb-5">I am a software engineer currently based in Aberdeen.</h2>
                         <h2 class="text-white-50 mx-auto mt-2 mb-1">Find me on:</h2><br>
-                        <a class="mx-2" href="https://www.linkedin.com/in/topherlee/" title="linkedin"><i class="fab fa-linkedin fa-2xl"></i></a>
-                        <a class="mx-2" href="https://github.com/topherlee" title="github"><i class="fab fa-github fa-2xl"></i></a>
+                        <a class="mx-2" target="_blank" href="https://www.linkedin.com/in/topherlee/" title="My LinkedIn"><i class="fab fa-linkedin fa-2xl"></i></a>
+                        <a class="mx-2" target="_blank" href="https://github.com/topherlee" title="My GitHub"><i class="fab fa-github fa-2xl"></i></a>
                         <br><br>
                         <a class="btn btn-primary" href="#about">More about me</a>
                     </div>
@@ -65,7 +78,7 @@
                     <div class="col-lg-8">
                         <h2 class="text-white mb-4">About Me</h2>
                         <p class="text-white-50">
-                            Highly motivated, multi-lingual Information Technology M.Sc. student with an undergraduate degree in Life Science
+                            I am a highly motivated, multi-lingual Information Technology M.Sc. student with an undergraduate degree in Life Science
                             (Bioinformatics) looking to transition into the Computer Science field. Experienced with Python, Django, Node.js, and Flask.
                         </p>
                     </div>
@@ -82,32 +95,31 @@
                     <div class="col-xl-8 col-lg-7 mt-4"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/project1.png" alt="..." /></div>
                     <div class="col-xl-4 col-lg-5 mb-3">
                         <div class="featured-text text-center text-lg-left">
-                            <h4><a class="nav-link" title="View Live Version" href="https://store-movies.herokuapp.com/">Movie Store</a></h4>
-                            <a class="mx-2" href="#!" title="View Source Code"><i class="fab fa-github fa-xl"></i></a>
+                            <h4><a class="nav-link" title="View Live Version" target="_blank" href="https://store-movies.herokuapp.com/">Movie Store</a></h4>
+                            <a class="mx-2" href="https://github.com/topherlee/movie-store" target="_blank" title="View Source Code"><i class="fab fa-github fa-xl"></i></a>
                             <p class="text-black-50 mb-0 align-center">Movie Store is a mock e-commerce web application built using Python and the Django framework. 
                             <br>PostgreSQL was implemented for the database and testing was implemented using Behave and Selenium.</p>
                         </div>
                     </div>
                 </div>
                 <div class="row gx-0 mb-5 mb-lg-6 align-items-center">
-                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/project1.png" alt="..." /></div>
+                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/project3.png" alt="..." /></div>
                     <div class="col-xl-4 col-lg-5 mb-3">
                         <div class="featured-text text-center text-lg-left">
-                            <h4><a class="nav-link" href="https://store-movies.herokuapp.com/">Movie Store</a></h4>
-                            <a class="mx-2" href="#!" title="View Source Code"><i class="fab fa-github fa-xl"></i></a>
-                            <p class="text-black-50 mb-0 align-center">Movie Store is a mock e-commerce web application built using Python and the Django framework. 
-                            <br>PostgreSQL was implemented for the database and testing was implemented using Behave and Selenium.</p>
+                            <h4><a class="nav-link" href="#about">Christopher's Portfolio + Chatbox</a></h4>
+                            <a class="mx-2" target="_blank" href="https://github.com/topherlee/nodejs-chatbox-portfolio" title="View Source Code"><i class="fab fa-github fa-xl"></i></a>
+                            <p class="text-black-50 mb-0 align-center">This portfolio and it's chat application is built using Node.js and Express.js for back-end server, JavaScript, JQuery and EJS for front-end interface, Socket.IO for interaction between back-end and front-end 
+                            and MongoDB with Mongoose for database storage.
                         </div>
                     </div>
                 </div>
                 <div class="row gx-0 mb-5 mb-lg-6 align-items-center">
-                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/project1.png" alt="..." /></div>
+                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/project2.png" alt="..." /></div>
                     <div class="col-xl-4 col-lg-5 mb-3">
                         <div class="featured-text text-center text-lg-left">
-                            <h4><a class="nav-link" href="https://store-movies.herokuapp.com/">Movie Store</a></h4>
-                            <a class="mx-2" href="#!" title="View Source Code"><i class="fab fa-github fa-xl"></i></a>
-                            <p class="text-black-50 mb-0 align-center">Movie Store is a mock e-commerce web application built using Python and the Django framework. 
-                            <br>PostgreSQL was implemented for the database and testing was implemented using Behave and Selenium.</p>
+                            <h4><a class="nav-link" target="_blank" href="https://css-air-pollution-aberdeen.herokuapp.com/">ESD Air Pollution Tracker</a></h4>
+                            <a class="mx-2" target="_blank" href="https://github.com/nutcracker22/group_assessment_esd" title="View Source Code"><i class="fab fa-github fa-xl"></i></a>
+                            <p class="text-black-50 mb-0 align-center">ESD Air Pollution Tracker is a joint collaboration work between Samuel Olutola, Steffen Atlas, and myself during our time at University of Aberdeen.</p>
                         </div>
                     </div>
                 </div>
@@ -124,10 +136,10 @@
                                 <!--<i class="fas fa-map-marked-alt text-primary mb-2"></i>-->
                                 <h6 class="m-0 text-black-50">JAN 2022 - Present</h6>
                                 <br>
-                                <h6 class="text-uppercase m-0">Aberdeen, United Kingdom</h6>
-                                <h3 class="text-uppercase m-0">University of Aberdeen</h3>
+                                <h6 class="text-uppercase m-0">United Kingdom</h6>
+                                <h3 class="text-uppercase m-0 fw-bold">University of Aberdeen</h3>
                                 <hr class="my-4 mx-auto" />
-                                <div class="medium text-black">M.Sc. Information Technology </div>
+                                <div class="medium text-black fw-bold">M.Sc. Information Technology </div>
                             </div>
                         </div>
                     </div>
@@ -137,10 +149,10 @@
                                 <!--<i class="fab fa-linkedin fa-lg text-primary mb-2"></i>-->
                                 <h6 class="text-uppercase m-0 text-black-50">Oct 2016 - Sep 2019</h6>
                                 <br>
-                                <h6 class="text-uppercase m-0">Münster, Germany</h6>
-                                <h3 class="text-uppercase m-0">University of Münster</h3>
+                                <h6 class="text-uppercase m-0 ">Germany</h6>
+                                <h3 class="text-uppercase m-0 fw-bold">University of Münster</h3>
                                 <hr class="my-4 mx-auto" />
-                                <div class="medium text-black">B. Sc. Life Sciences</div>
+                                <div class="medium text-black fw-bold">B. Sc. Life Sciences</div>
                             </div>
                         </div>
                     </div>
@@ -150,10 +162,10 @@
                                 <!--<i class="fas fa-mobile-alt text-primary mb-2"></i>-->
                                 <h6 class="text-uppercase m-0 text-black-50">Nov 2015 - Jul 2016</h6>
                                 <br>
-                                <h6 class="text-uppercase m-0">Geilenkirchen, Germany</h6>
-                                <h3 class="text-uppercase m-0">Freshman Institute - FH Aachen</h3>
+                                <h6 class="text-uppercase m-0">Germany</h6>
+                                <h3 class="text-uppercase m-0 fw-bold">FH Aachen</h3><br>
                                 <hr class="my-4 mx-auto" />
-                                <div class="medium text-black">Studienkolleg M-Kurs</div>
+                                <div class="medium text-black fw-bold">Studienkolleg M-Kurs</div>
                             </div>
                         </div>
                     </div>
@@ -163,52 +175,48 @@
         <section class="contact-section bg-black" id="recommendations">
             <div class="container px-4 px-lg-5">
                 <h2 class="text-white mb-5 text-center">Recommendations</h2>
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-4 mb-3 mb-md-0 ">
-                        <div class="card py-4 h-100">
-                            <div class="card-body text-center">
-                                <!--<i class="fas fa-map-marked-alt text-primary mb-2"></i>-->
-                                <div class="medium text-black text-justify">He is very motivated 
-                                    to work together with persons from other countries and other cultures.
-                                    Mr Lee is a team-player. He is able to change his perspectives and always supported his
-                                    partner and the younger students. He is open-minded highly reliable and always thorough 
-                                    in his work. He is open for criticism and highly motivated. He is very organized, determined 
-                                    and always very well prepared. I feel sure that Mr Lee will carry out conscientiously all the 
-                                    responsibilities he is entrusted with</div>
-                                <hr class="my-4 mx-auto" />
-                                <strong>Dr. Miriam Pott</strong>
-                                <h4 class="m-0">Director of Interdisciplinary Modules at University of Münster</h4>
-                            </div>
+                <div class="row" id="recommendationrow">
+                    <div class="card-med py-4 h-100 mb-5">
+                        <div class="card-body text-center">
+                            <!--<i class="fas fa-map-marked-alt text-primary mb-2"></i>-->
+                            <div class="medium text-black text-justify">Mr. Lee is a team-player and is very motivated 
+                                to work together with persons from other countries and other cultures.
+                                He is able to change his perspectives and always supported his
+                                partner and the younger students. He is open-minded, highly reliable, and always thorough 
+                                in his work. He is open for criticism and highly motivated. He is very organized, determined 
+                                and always very well prepared. I am sure that Mr. Lee will carry out conscientiously all the 
+                                responsibilities he is entrusted with</div>
+                            <hr class="my-4 mx-auto" />
+                            <h5 class="m-0 fw-bold">Dr. Miriam Pott</h5>
+                            Director of Interdisciplinary Modules at University of Münster
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="card py-4 h-100">
-                            <div class="card-body text-center">
-                                <!--<i class="fas fa-map-marked-alt text-primary mb-2"></i>-->
-                                <div class="medium text-black text-justify">
-                                    He showed exceptional skills in overcoming initial problems and frustrations and I 
-                                    was very impressed by how well he was able to formulate any questions he had 
-                                    so we could always find a solution quickly. He worked with tools he had never 
-                                    before used to address his thesis’ questions and quickly familiarized himself with 
-                                    this new technology. His code was always very concise and allowed me to 
-                                    quickly help him whenever he turned to me with a problem.
-                                </div>
-                                <hr class="my-4 mx-auto" />
-                                <strong>Sarah Wiechers</strong>
-                                <h4 class="m-0">Scientific Staff at Institute for Evolution and Biodiversity Münster</h4>
+                    <div class="card-med py-4 h-100">
+                        <div class="card-body text-center">
+                            <!--<i class="fas fa-map-marked-alt text-primary mb-2"></i>-->
+                            <div class="medium text-black text-justify">
+                                Christopher showed exceptional skills in overcoming initial problems and frustrations and I 
+                                was very impressed by how well he was able to formulate any questions he had 
+                                so we could always find a solution quickly. He worked with tools he had never 
+                                before used to address his thesis’ questions and quickly familiarized himself with 
+                                this new technology. His code was always very concise and allowed me to 
+                                quickly help him whenever he turned to me with a problem.
                             </div>
+                            <hr class="my-4 mx-auto" />
+                            <h5 class="m-0 fw-bold">Sarah Wiechers</h5>
+                            Scientific Staff at Institute for Evolution and Biodiversity Münster
                         </div>
                     </div>
                 </div>
             </div>
                 <div class="social d-flex justify-content-center">
-                    <a class="mx-2" href="https://www.linkedin.com/in/topherlee/" title="linkedin"><i class="fab fa-linkedin"></i></a>
-                    <a class="mx-2" href="https://github.com/topherlee" title="github"><i class="fab fa-github"></i></a>
+                    <a class="mx-2" target="_blank" href="https://www.linkedin.com/in/topherlee/" title="My LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a class="mx-2" target="_blank" href="https://github.com/topherlee" title="My GitHub"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </section>
         <!-- Footer-->
-        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Made by Christopher Lee, 2022</div></footer>
+        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Made by Christopher Lee with ❤️, 2022</div></footer>
         <div id="demo-modal" class="modal" role="dialog" tabindex="-1">
             <div class="model-inner">
             <% if (user) { %>
@@ -234,6 +242,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!--JQuery-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
         <!-- Core theme JS-->
         <script type="text/javascript" src="js/scripts.js"></script>
     </body>

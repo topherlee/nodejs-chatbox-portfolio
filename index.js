@@ -14,6 +14,7 @@ const mongoose = require('mongoose');
 const Chat = require('./models/Chat');
 const { auth, requiresAuth } = require('express-openid-connect');
 
+//Auth0 configuration for login and signup authorizations
 const config = {
     authRequired: false,
     auth0Logout: true,
@@ -33,30 +34,30 @@ app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 app.use(auth(config));
 
+app.get('/', (req, res) => {
+    res.render('index.ejs', {
+        user: req.oidc.user,        //retrieve logged in user's username
+    });
+});
+
 app.get('/chat', requiresAuth(), (req, res) => {
     res.render('chat.ejs', {
         user: req.oidc.user,
     });
 });
 
-app.get('/', (req, res) => {
-    res.render('index.ejs', {
+app.get('/about', (req, res) => {
+    res.render('about.ejs', {
         user: req.oidc.user,
     });
-    //res.sendFile(__dirname + '/views/index.html');
-});
-
-app.get('/profile', requiresAuth(), async (req, res) => {
-    res.send(JSON.stringify(req.oidc.user.name));
 });
 
 const activeUsers = new Set();
 io.on('connection', function(socket) {
-    //retrieve all chats
+    //retrieve 200 of the newest chat messages to be displayed upon connecting to chat server
     Chat.find().then(function(result){
         var i = 0;
         for (var msg of result){
-            //console.log(msg)
             i++
             if (i <= 200) {
                 socket.emit('output history', msg["message"], msg["user"], msg["timestamp"]);
@@ -68,16 +69,17 @@ io.on('connection', function(socket) {
     socket.on("new user", function(username){
         activeUsers.add(username);
         socket.username = username;
-        //send users list to front end
+        //send users list to front end client
         io.emit("active users", [...activeUsers]);
     });
 
-    //notifies everyone when a new user logs in the chat
+    //notifies everyone when a new user connects to the chat server
     socket.on('connected', function(msg, username, timestamp){
         console.log(`${username} Connected`)
         io.emit("connected", msg, username, timestamp);
     });
 
+    //broadcasts chat messages to other sockets
     socket.on('chat message', function(msg, username, timestamp){
         console.log(`<${timestamp}> ` + username + ": " + msg);
         const msgToStore = Chat.create({
@@ -89,10 +91,12 @@ io.on('connection', function(socket) {
         });
     });
 
+    //broadcast typing indicator 
     socket.on('typing indicator', function(username, isTyping){
         socket.broadcast.emit("typing indicator", username, isTyping);
     });
 
+    //notifies everyone when a user disconnects from the chat server
     socket.on('disconnect', function() {
         activeUsers.delete(socket.username);
         console.log(`${socket.username} Disconnected`);

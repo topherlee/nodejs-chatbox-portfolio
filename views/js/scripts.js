@@ -1,12 +1,3 @@
-/*!
-* Start Bootstrap - Grayscale v7.0.5 (https://startbootstrap.com/theme/grayscale)
-* Copyright 2013-2022 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-grayscale/blob/master/LICENSE)
-*/
-//
-// Scripts
-// 
-
 document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -39,15 +30,6 @@ window.addEventListener('DOMContentLoaded', event => {
     // Shrink the navbar when page is scrolled
     document.addEventListener('scroll', navbarShrink);
 
-    // Activate Bootstrap scrollspy on the main nav element
-    /*const mainNav = document.body.querySelector('#mainNav');
-    if (mainNav) {
-        new bootstrap.ScrollSpy(document.body, {
-            target: '#mainNav',
-            offset: 74,
-        });
-    };*/
-
     // Collapse responsive navbar when toggler is visible
     const navbarToggler = document.body.querySelector('.navbar-toggler');
     const responsiveNavItems = [].slice.call(
@@ -60,7 +42,11 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         });
     });
+});
 
+//making profile popup modal draggable using jquery
+$(document).ready(function(){
+    $(".model-inner").draggable({cursor: "grabbing"});
 });
 
 var missing = {
@@ -68,6 +54,7 @@ var missing = {
 }; 
 (document.getElementById("closeModal") || missing).addEventListener("click", closePopUpModal);
 
+//function to open and close profile popup modal
 var modal = document.getElementById("demo-modal");
 function openPopUpModal(){
     modal.setAttribute("open", "true");
