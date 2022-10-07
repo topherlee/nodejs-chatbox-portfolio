@@ -7,6 +7,9 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const path = require('path');
 const cors = require('cors');
+const jsdom = require('jsdom');
+const dom = new jsdom.JSDOM("");
+const jquery = require('jquery')(dom.window);
 const mongoose = require('mongoose');
 const Chat = require('./models/Chat');
 const { auth, requiresAuth } = require('express-openid-connect');
@@ -44,7 +47,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/profile', requiresAuth(), async (req, res) => {
-    res.send(JSON.stringify(req.oidc.user));
+    res.send(JSON.stringify(req.oidc.user.name));
 });
 
 const activeUsers = new Set();

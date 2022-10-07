@@ -105,7 +105,7 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 }
 
 h1, .h1 {
-  font-size: calc(1.375rem + 1.5vw);
+  font-size: calc(1.35rem + 1.5vw);
 }
 @media (min-width: 1200px) {
   h1, .h1 {
@@ -592,7 +592,7 @@ progress {
 }
 
 .img-fluid {
-  max-width: 100%;
+  max-width: 75%;
   height: auto;
 }
 
@@ -6326,6 +6326,10 @@ textarea.form-control-lg {
   text-align: center;
 }
 
+.align-left {
+  text-align: left;
+}
+
 .carousel-dark .carousel-control-prev-icon,
 .carousel-dark .carousel-control-next-icon {
   filter: invert(1) grayscale(100);
@@ -7461,6 +7465,10 @@ textarea.form-control-lg {
   margin-bottom: auto !important;
 }
 
+.mt-minus {
+  margin-top: -0.75rem !important;
+}
+
 .mt-0 {
   margin-top: 0 !important;
 }
@@ -7835,6 +7843,10 @@ textarea.form-control-lg {
 
 .text-center {
   text-align: center !important;
+}
+
+.text-justify {
+  text-align: justify !important;
 }
 
 .text-decoration-none {
@@ -9864,6 +9876,10 @@ textarea.form-control-lg {
     margin-bottom: 3rem !important;
   }
 
+  .mb-lg-6 {
+    margin-bottom: 10rem !important;
+  }
+
   .mb-lg-auto {
     margin-bottom: auto !important;
   }
@@ -11566,9 +11582,14 @@ body {
   max-width: 20rem;
   font-size: 1rem;
 }
+@media (max-width: 450px) {
+  .masthead h1, .masthead .h1 {
+    letter-spacing: 0.3rem;
+  }
+}
 @media (min-width: 768px) {
   .masthead h1, .masthead .h1 {
-    font-size: 4rem;
+    font-size: 3.5rem;
     line-height: 4rem;
   }
 }
@@ -11624,7 +11645,7 @@ body {
 }
 
 .signup-section {
-  padding: 10rem 0;
+  padding: 5rem 0 10rem 0;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.5) 75%, #000 100%), url("../assets/img/bg-signup.jpg");
   background-position: center;
   background-repeat: no-repeat;
@@ -11652,7 +11673,6 @@ body {
 .contact-section .card h4, .contact-section .card .h4 {
   font-size: 0.8rem;
   font-family: "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  text-transform: uppercase;
   letter-spacing: 0.15rem;
 }
 .contact-section .card hr {
@@ -11693,6 +11713,10 @@ body {
   height: 100%;
 }
 
+.modal img {
+  padding:2rem;
+}
+
 .modal[open] {
   display: flex;
 }
@@ -11701,7 +11725,7 @@ body {
   background-color: white;
   border-radius: 0.5em;
   max-width: 600px;
-  padding: 2em;
+  padding: 2rem;
   margin: auto;
 }
 
@@ -11718,6 +11742,10 @@ body {
   border-bottom: 2px solid black;
 }
 
+#closeModal{
+  border-radius: 7px;
+}
+
 #modal-overlay {
   width: 100%;
   height: 100%;
@@ -11727,4 +11755,19 @@ body {
   z-index: 0;
   background-color: black;
   opacity: 0.5;  
+}
+
+::-webkit-input-placeholder {
+    text-align: center;
+}
+:-moz-placeholder {
+    /* Firefox 18- */
+    text-align: center;
+}
+::-moz-placeholder {
+    /* Firefox 19+ */
+    text-align: center;
+}
+:-ms-input-placeholder {
+    text-align: center;
 }
