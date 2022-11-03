@@ -19,7 +19,7 @@ const config = {
     authRequired: false,
     auth0Logout: true,
     secret: process.env.auth0ClientSecret,
-    baseURL: 'https://mixermarble-storechariot-8080.codio-box.uk',
+    baseURL: 'http://localhost:8080',
     clientID: process.env.auth0ClientId,
     issuerBaseURL: 'https://christopher-lee.eu.auth0.com',
 };

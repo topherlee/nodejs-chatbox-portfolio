@@ -105,7 +105,7 @@ socket.on("chat message", function(msg, username, timestamp){
 //retrieve chat history from backend and show it to the client
 socket.on("output history", function(msg, username, timestamp){
     var messageLine = document.createElement("div");
-    if (username == "<%= user.nickname %>") {
+    if (username == `${user.nickname}`) {
         messageLine.className = "myMessage";
     } else {
         messageLine.className = "incomingMessage";
